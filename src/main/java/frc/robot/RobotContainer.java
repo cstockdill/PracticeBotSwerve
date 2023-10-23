@@ -66,7 +66,7 @@ public class RobotContainer {
       .onFalse(new InstantCommand(() -> swerveJoystickCmd.setFieldOriented(true)));
 
     m_driverController.rightBumper()
-      .onTrue(new InstantCommand(() -> swerveJoystickCmd.setMotionScale(swerveSubsystem.getDampenedSpeedFactor())));
+      .onTrue(new InstantCommand(() -> swerveJoystickCmd.setMotionScale(swerveSubsystem.getDampenedSpeedFactor())))
       .onFalse(new InstantCommand(() -> swerveJoystickCmd.setMotionScale(swerveSubsystem.getNormalSpeedFactor())));
 
     m_driverController.axisGreaterThan(3, 0.5)
