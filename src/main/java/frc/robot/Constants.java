@@ -44,6 +44,15 @@ public static final class DriveConstants {
           new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
           new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
+  public static final class FrontLeft {
+    public static final int DriveMotor = 2;
+    public static final int TurningMotor = 2;
+    public static final int TurningAbsoluteEncoder = 2;
+    public static final boolean TurningEncoderReversed = true;
+    public static final boolean DriveEncoderReversed = true;
+    public static final boolean DriveAbsoluteEncoderReversed = false;
+  }
+
   public static final int kFrontLeftDriveMotorPort = 2;
   public static final int kBackLeftDriveMotorPort = 1;
   public static final int kFrontRightDriveMotorPort = 3;
