@@ -72,6 +72,11 @@ public class SwerveModule implements Sendable {
         resetEncoders();
     }
 
+    public void lockEncoderOffset(){
+        Preferences.setDouble(encoderOffsetKey, getRawAbsoluteEncoderRad());
+        loadPreferences(); //to read it back out via round trip.
+    }
+
     public void loadPreferences(){
         this.absoluteEncoderOffsetRad = Preferences.getDouble(encoderOffsetKey, 0);
     }
@@ -105,8 +110,17 @@ public class SwerveModule implements Sendable {
         return turningEncoder.getVelocity();
     }
 
+    public double getRawAbsoluteEncoderRad(){
+        //directionDutyCycle.getAbsolutePosition();
+        double angle = directionDutyCycle.getAbsolutePosition();
+        
+        angle *= 2.0 * Math.PI; //convert 0-1 range into radians
+
+        return angle * (absoluteEncoderReversed ? -1.0 : 1.0);        
+    }
+
     public double getAbsoluteEncoderRad() {
-        directionDutyCycle.getAbsolutePosition();
+        //directionDutyCycle.getAbsolutePosition();
         double angle = directionDutyCycle.getAbsolutePosition();
         
         angle *= 2.0 * Math.PI; //convert 0-1 range into radians
