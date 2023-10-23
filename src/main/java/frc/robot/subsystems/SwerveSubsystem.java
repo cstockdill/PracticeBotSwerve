@@ -21,16 +21,16 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.SetWheelAlignment;
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
-            DriveConstants.kFrontLeftDriveMotorPort,
-            DriveConstants.kFrontLeftTurningMotorPort,
-            DriveConstants.kFrontLeftDriveEncoderReversed,
-            DriveConstants.kFrontLeftTurningEncoderReversed,
-            DriveConstants.kFrontLeftDriveAbsoluteEncoderPort,
-            //DriveConstants.kFrontLeftDriveAbsoluteEncoderOffsetRad,
-            DriveConstants.kFrontLeftDriveAbsoluteEncoderReversed);
+            DriveConstants.FrontLeft.DriveMotor,
+            DriveConstants.FrontLeft.TurningMotor,
+            DriveConstants.FrontLeft.DriveEncoderReversed,
+            DriveConstants.FrontLeft.TurningEncoderReversed,
+            DriveConstants.FrontLeft.TurningAbsoluteEncoder,
+            DriveConstants.FrontLeft.DriveAbsoluteEncoderReversed);
 
     private final SwerveModule frontRight = new SwerveModule(
             DriveConstants.kFrontRightDriveMotorPort,
@@ -99,6 +99,8 @@ public class SwerveSubsystem extends SubsystemBase {
             .withSize(2,2)
             .withPosition(2, 2);
 
+        swerveTab.add("Set Wheel Offsets", new SetWheelAlignment(this));
+        
         turboSpeedFactor = swerveTab.add("Turbo Percentage", 0.9)
             .withWidget(BuiltInWidgets.kNumberSlider) // specify the widget here
             .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
@@ -125,6 +127,12 @@ public class SwerveSubsystem extends SubsystemBase {
         return dampenedSpeedFactor.getDouble(0.1);
     }
 
+    public void lockEncoderOffset(){
+        frontLeft.lockEncoderOffset();
+        frontRight.lockEncoderOffset();
+        backLeft.lockEncoderOffset();
+        backRight.lockEncoderOffset();
+    }
 
     public void loadPreferences(){
         frontLeft.loadPreferences();
