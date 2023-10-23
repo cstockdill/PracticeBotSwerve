@@ -64,10 +64,10 @@ public static final class DriveConstants {
   public static final boolean kFrontRightDriveEncoderReversed = false;
   public static final boolean kBackRightDriveEncoderReversed = false;
 
-  public static final int kFrontLeftDriveAbsoluteEncoderPort = 0;
-  public static final int kBackLeftDriveAbsoluteEncoderPort = 2;
-  public static final int kFrontRightDriveAbsoluteEncoderPort = 1;
-  public static final int kBackRightDriveAbsoluteEncoderPort = 3;
+  public static final int kFrontLeftDriveAbsoluteEncoderPort = 2;
+  public static final int kBackLeftDriveAbsoluteEncoderPort = 1;
+  public static final int kFrontRightDriveAbsoluteEncoderPort = 3;
+  public static final int kBackRightDriveAbsoluteEncoderPort = 4;
 
   public static final boolean kFrontLeftDriveAbsoluteEncoderReversed = false;
   public static final boolean kBackLeftDriveAbsoluteEncoderReversed = false;

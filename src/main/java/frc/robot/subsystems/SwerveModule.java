@@ -52,10 +52,9 @@ public class SwerveModule implements Sendable {
         turningMotor = new CANSparkMax(turningMotorId, MotorType.kBrushless);
 
         
-        //use the same DIO pins as motor numbering. 
-        // TODO: add this as configuration
-        directionDutyCycle = new DutyCycleEncoder(driveMotorId);
+        directionDutyCycle = new DutyCycleEncoder(absoluteEncoderId);
         directionDutyCycle.setDutyCycleRange(1/4096, 4096/4096);
+
 
         driveTalonFX.configFactoryDefault();
 
