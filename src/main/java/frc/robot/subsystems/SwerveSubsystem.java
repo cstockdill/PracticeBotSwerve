@@ -116,13 +116,13 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public double getTurboSpeedFactor(){
-        return turboSpeedFactor.getDouble(1.0);
+        return turboSpeedFactor.getDouble(0.5);
     }
     public double getNormalSpeedFactor(){
-        return normalSpeedFactor.getDouble(0.5);
+        return normalSpeedFactor.getDouble(0.3);
     }
     public double getDampenedSpeedFactor(){
-        return dampenedSpeedFactor.getDouble(0.2);
+        return dampenedSpeedFactor.getDouble(0.1);
     }
 
 
