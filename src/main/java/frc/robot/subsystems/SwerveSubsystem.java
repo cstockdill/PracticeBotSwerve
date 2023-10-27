@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import java.util.Map;
 
-import com.ctre.phoenix.sensors.WPI_Pigeon2;
-
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -61,8 +59,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final ADIS16470_IMU gyro = new ADIS16470_IMU();
 
-    private final WPI_Pigeon2 pigeon = new WPI_Pigeon2(20, "rio");
-
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(DriveConstants.kDriveKinematics,
             new Rotation2d(0), getModulePositions());
 
@@ -81,7 +77,6 @@ public class SwerveSubsystem extends SubsystemBase {
             try {
                 Thread.sleep(1000);
                 zeroHeading();
-                zeroYTilt();
             } catch (Exception e) {
             }
         }).start();
@@ -143,33 +138,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void zeroHeading() {
         gyro.reset();
-        pigeon.reset();
-        
     }
     public void setHeading(double setAngle){
-        pigeon.setYaw(setAngle);
-    }
-
-    public double xTilt() {
-        return gyro.getXFilteredAccelAngle();
-    }
-    public double yTilt(){ //front back
-        //15 degrees max
-
-        return pigeon.getPitch();
-
-
-
-
-
-    }
-    public void zeroYTilt(){
-        yTiltOffset = gyro.getYFilteredAccelAngle();
+        //pigeon.setYaw(setAngle);
     }
 
     public double getHeading() {
-        //return Math.IEEEremainder(gyro.getAngle(), 360); 
-        return Math.IEEEremainder(-pigeon.getAngle(), 360); 
+        return Math.IEEEremainder(gyro.getAngle(), 360); 
     }
 
     public Rotation2d getRotation2d() {
@@ -198,8 +173,7 @@ public class SwerveSubsystem extends SubsystemBase {
         
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
-        //SmartDashboard.putNumber("X Tilt", xTilt());
-        SmartDashboard.putNumber("Y Tilt", yTilt());
+
     }
 
     public void stopModules() {
