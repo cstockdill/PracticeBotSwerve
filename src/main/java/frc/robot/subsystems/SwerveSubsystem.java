@@ -31,31 +31,28 @@ public class SwerveSubsystem extends SubsystemBase {
             DriveConstants.FrontLeft.DriveAbsoluteEncoderReversed);
 
     private final SwerveModule frontRight = new SwerveModule(
-            DriveConstants.kFrontRightDriveMotorPort,
-            DriveConstants.kFrontRightTurningMotorPort,
-            DriveConstants.kFrontRightDriveEncoderReversed,
-            DriveConstants.kFrontRightTurningEncoderReversed,
-            DriveConstants.kFrontRightDriveAbsoluteEncoderPort,
-            //DriveConstants.kFrontRightDriveAbsoluteEncoderOffsetRad,
-            DriveConstants.kFrontRightDriveAbsoluteEncoderReversed);
+            DriveConstants.FrontRight.DriveMotor,
+            DriveConstants.FrontRight.TurningMotor,
+            DriveConstants.FrontRight.DriveEncoderReversed,
+            DriveConstants.FrontRight.TurningEncoderReversed,
+            DriveConstants.FrontRight.TurningAbsoluteEncoder,
+            DriveConstants.FrontRight.DriveAbsoluteEncoderReversed);
 
     private final SwerveModule backLeft = new SwerveModule(
-            DriveConstants.kBackLeftDriveMotorPort,
-            DriveConstants.kBackLeftTurningMotorPort,
-            DriveConstants.kBackLeftDriveEncoderReversed,
-            DriveConstants.kBackLeftTurningEncoderReversed,
-            DriveConstants.kBackLeftDriveAbsoluteEncoderPort,
-            //DriveConstants.kBackLeftDriveAbsoluteEncoderOffsetRad,
-            DriveConstants.kBackLeftDriveAbsoluteEncoderReversed);
+            DriveConstants.BackLeft.DriveMotor,
+            DriveConstants.BackLeft.TurningMotor,
+            DriveConstants.BackLeft.DriveEncoderReversed,
+            DriveConstants.BackLeft.TurningEncoderReversed,
+            DriveConstants.BackLeft.TurningAbsoluteEncoder,
+            DriveConstants.BackLeft.DriveAbsoluteEncoderReversed);
 
     private final SwerveModule backRight = new SwerveModule(
-            DriveConstants.kBackRightDriveMotorPort,
-            DriveConstants.kBackRightTurningMotorPort,
-            DriveConstants.kBackRightDriveEncoderReversed,
-            DriveConstants.kBackRightTurningEncoderReversed,
-            DriveConstants.kBackRightDriveAbsoluteEncoderPort,
-            //DriveConstants.kBackRightDriveAbsoluteEncoderOffsetRad,
-            DriveConstants.kBackRightDriveAbsoluteEncoderReversed);
+            DriveConstants.BackRight.DriveMotor,
+            DriveConstants.BackRight.TurningMotor,
+            DriveConstants.BackRight.DriveEncoderReversed,
+            DriveConstants.BackRight.TurningEncoderReversed,
+            DriveConstants.BackRight.TurningAbsoluteEncoder,
+            DriveConstants.BackRight.DriveAbsoluteEncoderReversed);
 
     private final ADIS16470_IMU gyro = new ADIS16470_IMU();
 

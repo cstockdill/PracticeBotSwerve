@@ -44,6 +44,10 @@ public static final class DriveConstants {
           new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
           new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
+
+  // The wheel config contains the info for each wheel, including the CAN IDs for the motors, and the DIO port used for the 
+  // absolute encoders for each wheel. These numbers need to match the CAN IDs set on each motor.
+  // The TurningMotor and DriveMotor IDs match as they run on different CAN busses, so are set the same for convenience.
   public static final class FrontLeft {
     public static final int DriveMotor = 3;
     public static final int TurningMotor = 3;
@@ -53,40 +57,32 @@ public static final class DriveConstants {
     public static final boolean DriveAbsoluteEncoderReversed = false;
   }
 
-  public static final int kFrontLeftDriveMotorPort = 3;
-  public static final int kBackLeftDriveMotorPort = 2;
-  public static final int kFrontRightDriveMotorPort = 4;
-  public static final int kBackRightDriveMotorPort = 1;
+  public static final class FrontRight {
+    public static final int DriveMotor = 4;
+    public static final int TurningMotor = 4;
+    public static final int TurningAbsoluteEncoder = 4;
+    public static final boolean TurningEncoderReversed = true;
+    public static final boolean DriveEncoderReversed = true;
+    public static final boolean DriveAbsoluteEncoderReversed = false;
+  }
 
-  public static final int kFrontLeftTurningMotorPort = 3;
-  public static final int kBackLeftTurningMotorPort = 2;
-  public static final int kFrontRightTurningMotorPort = 4;
-  public static final int kBackRightTurningMotorPort = 1;
+  public static final class BackLeft {
+    public static final int DriveMotor = 2;
+    public static final int TurningMotor = 2;
+    public static final int TurningAbsoluteEncoder = 2;
+    public static final boolean TurningEncoderReversed = true;
+    public static final boolean DriveEncoderReversed = true;
+    public static final boolean DriveAbsoluteEncoderReversed = false;
+  }
 
-  public static final boolean kFrontLeftTurningEncoderReversed = true;
-  public static final boolean kBackLeftTurningEncoderReversed = true;
-  public static final boolean kFrontRightTurningEncoderReversed = true;
-  public static final boolean kBackRightTurningEncoderReversed = true;
-
-  public static final boolean kFrontLeftDriveEncoderReversed = true;
-  public static final boolean kBackLeftDriveEncoderReversed = true;
-  public static final boolean kFrontRightDriveEncoderReversed = false;
-  public static final boolean kBackRightDriveEncoderReversed = false;
-
-  public static final int kFrontLeftDriveAbsoluteEncoderPort = 3;
-  public static final int kBackLeftDriveAbsoluteEncoderPort = 2;
-  public static final int kFrontRightDriveAbsoluteEncoderPort = 4;
-  public static final int kBackRightDriveAbsoluteEncoderPort = 1;
-
-  public static final boolean kFrontLeftDriveAbsoluteEncoderReversed = false;
-  public static final boolean kBackLeftDriveAbsoluteEncoderReversed = false;
-  public static final boolean kFrontRightDriveAbsoluteEncoderReversed = false;
-  public static final boolean kBackRightDriveAbsoluteEncoderReversed = false;
-
-  //public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = 2.41;
-  //public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = 0.35+3.14;
-  //public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = 1.93;
-  //public static final double kBackRightDriveAbsoluteEncoderOffsetRad = 0.49;
+  public static final class BackRight {
+    public static final int DriveMotor = 1;
+    public static final int TurningMotor = 1;
+    public static final int TurningAbsoluteEncoder = 1;
+    public static final boolean TurningEncoderReversed = true;
+    public static final boolean DriveEncoderReversed = true;
+    public static final boolean DriveAbsoluteEncoderReversed = false;
+  }
 
   public static final double kPhysicalMaxSpeedMetersPerSecond = 4.67; // was 5
   public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
@@ -113,15 +109,6 @@ public static final class InputSystemConstants {
   public static final int kInputMotorCANid = 7;
 }
 
-public static final class ArmSystemConstants {
-  public static final int kArmMotorCANid = 6;
-  public static final int kUpperLimitSwitchPort = 5;
-  public static final int kLowerLimitSwitchPort = 6;
-  public static final double kP = 0.1; //was 0.1
-  public static final double kMaxVelocityUnitsPerSecond = 50;
-  public static final double kMaxAccelerationUnitsPerSecSquared = 90;
-  public static final double kArmOffsetUnits = 0;
-}
 
 public static final class AutoConstants {
   public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 4;
