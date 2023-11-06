@@ -40,15 +40,13 @@ public class SwerveModule implements Sendable {
 
         driveid = driveMotorId;
 
+        // we load the absolute encoder offsets from config, allowing easier calibration.
         encoderOffsetKey = "absoluteEndcoderOffsetRadWheel"+driveid;
         Preferences.initDouble(encoderOffsetKey, 0);
 
-        //this.absoluteEncoderOffsetRad = 0; //set in preferences
         this.absoluteEncoderReversed = absoluteEncoderReversed;
-        //absoluteEncoder = new AnalogInput(absoluteEncoderId);
 
         driveTalonFX = new TalonFX(driveMotorId, "rio");
-        //driveMotor = new CANSparkMax(driveMotorId, MotorType.kBrushless);
         turningMotor = new CANSparkMax(turningMotorId, MotorType.kBrushless);
 
         
@@ -82,13 +80,8 @@ public class SwerveModule implements Sendable {
     }
 
     public double getDrivePosition() {
-        //return driveEncoder.getPosition();
-        //return driveTalonFX.getSelectedSensorPosition() / 2048;
-
         return (driveTalonFX.getSelectedSensorPosition() / 2048)
             * ModuleConstants.kDriveEncoderRot2Meter;
-
-
     }
 
     public double getTurningPosition() {
@@ -102,7 +95,6 @@ public class SwerveModule implements Sendable {
       }
 
     public double getDriveVelocity() {
-        //return driveEncoder.getVelocity();
         return (driveTalonFX.getSelectedSensorVelocity() / 2048) 
          * ModuleConstants.kDriveEncoderRPM2MeterPerSec;
     }
@@ -111,7 +103,7 @@ public class SwerveModule implements Sendable {
     }
 
     public double getRawAbsoluteEncoderRad(){
-        //directionDutyCycle.getAbsolutePosition();
+        // returns the encoder value without applying the configured offset
         double angle = directionDutyCycle.getAbsolutePosition();
         
         angle *= 2.0 * Math.PI; //convert 0-1 range into radians
@@ -120,7 +112,6 @@ public class SwerveModule implements Sendable {
     }
 
     public double getAbsoluteEncoderRad() {
-        //directionDutyCycle.getAbsolutePosition();
         double angle = directionDutyCycle.getAbsolutePosition();
         
         angle *= 2.0 * Math.PI; //convert 0-1 range into radians
@@ -130,7 +121,6 @@ public class SwerveModule implements Sendable {
     }
 
     public void resetEncoders() {
-        //driveEncoder.setPosition(0);
         driveTalonFX.setSelectedSensorPosition(0.0);
         turningEncoder.setPosition(getAbsoluteEncoderRad()); //TODO: this isn't referencing the right encoder. now using directionDutyCycle
     }
@@ -157,7 +147,7 @@ public class SwerveModule implements Sendable {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        // TODO Auto-generated method stub
+        // These are the values placed on the dashboard if the module is added.
         builder.addDoubleProperty("Drive Percentage", () -> driveTalonFX.getMotorOutputPercent() , null);
         builder.addDoubleProperty("Rotate Percentage", () -> turningMotor.getAppliedOutput() , null);
         builder.addDoubleProperty("RotationRad", () -> getTurningPosition(), null);
