@@ -16,19 +16,23 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class SetWheelAlignment extends CommandBase {
 
     private final SwerveSubsystem swerveSubsystem;
+    private boolean done = true;
 
     public SetWheelAlignment(SwerveSubsystem swerveSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
         addRequirements(swerveSubsystem);
     }
 
+
     @Override
     public void initialize() {
+        done = false;
     }
 
     @Override
     public void execute() {
         swerveSubsystem.lockEncoderOffset();
+        done = true;
     }
 
     @Override
@@ -38,6 +42,12 @@ public class SetWheelAlignment extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return done;
+    }
+
+    @Override
+    public boolean runsWhenDisabled() {
+        // This is a config command, so must run disabled.
+        return true;
     }
 }
