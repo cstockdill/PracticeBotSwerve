@@ -10,6 +10,7 @@ import java.util.Map;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -20,6 +21,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.SetWheelAlignment;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
@@ -107,6 +113,23 @@ public class SwerveSubsystem extends SubsystemBase {
             .withWidget(BuiltInWidgets.kNumberSlider) // specify the widget here
             .withProperties(Map.of("min", 0, "max", 1)) // specify widget properties here
             .getEntry();
+
+
+            // Configure the AutoBuilder last
+        AutoBuilder.configureHolonomic(
+            this::getPose, // Robot pose supplier
+            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+                4.5, // Max module speed, in m/s
+                0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+                new ReplanningConfig() // Default path replanning config. See the API for the options here
+            ),
+            this // Reference to this subsystem to set requirements
+        );
     }
 
     public double getTurboSpeedFactor(){
@@ -151,6 +174,9 @@ public class SwerveSubsystem extends SubsystemBase {
     public Pose2d getPose() {
         return odometer.getPoseMeters();
     }
+    private void resetPose(Pose2d pose2d1) {
+        resetOdometry(pose2d1);
+    }
 
     public void resetOdometry(Pose2d pose) {
         odometer.resetPosition(getRotation2d(), getModulePositions(), pose);
@@ -188,6 +214,16 @@ public class SwerveSubsystem extends SubsystemBase {
         backRight.setDesiredState(desiredStates[3]);
     }
 
+    public SwerveModuleState[] getModuleStates(){
+        SwerveModuleState [] statelist = {
+            frontLeft.getState(),
+            frontRight.getState(),
+            backLeft.getState(),
+            backRight.getState()
+        };
+        return statelist;
+    }
+
 
     @Override
     public void initSendable(SendableBuilder builder) {
@@ -195,4 +231,18 @@ public class SwerveSubsystem extends SubsystemBase {
         super.initSendable(builder);
 
     }
+
+    private ChassisSpeeds getRobotRelativeSpeeds() {
+        return DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
+
+    }
+
+    private void driveRobotRelative(ChassisSpeeds chassisspeeds1) {
+         // 5. Convert chassis speeds to individual module states
+         SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisspeeds1);
+
+         // 6. Output each module states to wheels
+         setModuleStates(moduleStates);
+    }
+
 }
