@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -16,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-
+  private NetworkTableInstance m_oldInst =null;
   private RobotContainer m_robotContainer;
 
   /**
@@ -102,5 +103,17 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    if(isSimulation()) {
+      NetworkTableInstance inst = NetworkTableInstance.getDefault();
+      if (inst != m_oldInst){
+        inst.stopServer();
+        // Change the IP address in the below function to the IP address you use to connect to the PhotonVision UI.
+        inst.setServer("photonvision.local");
+        inst.startClient4("Robot Simulation");
+        System.out.println(" Setting new network table for simulation");
+        m_oldInst = inst;
+      }
+    }
+  }
 }
