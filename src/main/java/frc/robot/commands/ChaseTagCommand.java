@@ -1,8 +1,5 @@
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
-import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -16,7 +13,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class ChaseTagCommand extends CommandBase {
@@ -26,7 +23,7 @@ public class ChaseTagCommand extends CommandBase {
   private static final TrapezoidProfile.Constraints OMEGA_CONSTRATINTS = 
       new TrapezoidProfile.Constraints(8, 8);
   
-  private static final int TAG_TO_CHASE = 2;
+  private static final int TAG_TO_CHASE = 1;
   private static final Transform2d TAG_TO_GOAL = new Transform2d(new Translation2d(1, 0), Rotation2d.fromDegrees(180.0));
    /**
      * Physical location of the camera on the robot, relative to the center of the robot.
@@ -35,9 +32,8 @@ public class ChaseTagCommand extends CommandBase {
         new Transform2d(new Translation2d(inchesToMeters(12.75), 0.0), new Rotation2d(0.0));
 
   private final VisionSubsystem m_VisionSubsystem;
-  private final DrivetrainSubsystem drivetrainSubsystem;
-  private final Supplier<Pose2d> poseProvider;
-
+  private final SwerveSubsystem drivetrainSubsystem;
+  
   private final ProfiledPIDController xController = new ProfiledPIDController(4, 0, 0, X_CONSTRAINTS);
   private final ProfiledPIDController yController = new ProfiledPIDController(4, 0, 0, Y_CONSTRAINTS);
   private final ProfiledPIDController omegaController = new ProfiledPIDController(2, 0, 0, OMEGA_CONSTRATINTS);
@@ -47,12 +43,10 @@ public class ChaseTagCommand extends CommandBase {
 
   public ChaseTagCommand(
         VisionSubsystem visionSubsystem, 
-        DrivetrainSubsystem drivetrainSubsystem,
-        Supplier<Pose2d> poseProvider) {
+        SwerveSubsystem drivetrainSubsystem) {
     this.m_VisionSubsystem = visionSubsystem;
     this.drivetrainSubsystem = drivetrainSubsystem;
-    this.poseProvider = poseProvider;
-
+   
     xController.setTolerance(0.1);
     yController.setTolerance(0.1);
     omegaController.setTolerance(Units.degreesToRadians(3));
@@ -65,7 +59,7 @@ public class ChaseTagCommand extends CommandBase {
   public void initialize() {
     goalPose = null;
     lastTarget = null;
-    var robotPose = poseProvider.get();
+    var robotPose = drivetrainSubsystem.getPose();
     omegaController.reset(robotPose.getRotation().getRadians());
     xController.reset(robotPose.getX());
     yController.reset(robotPose.getY());
@@ -73,7 +67,7 @@ public class ChaseTagCommand extends CommandBase {
 
   @Override
   public void execute() {
-      var robotPose = poseProvider.get();
+      var robotPose = drivetrainSubsystem.getPose();
       var target = m_VisionSubsystem.getTargetForTag(TAG_TO_CHASE);
 
       if (target != null && !target.equals(lastTarget)) {
@@ -101,28 +95,30 @@ public class ChaseTagCommand extends CommandBase {
           omegaController.setGoal(goalPose.getRotation().getRadians());
       }
 
-      var xSpeed = xController.calculate(robotPose.getX());
+      double xSpeed = xController.calculate(robotPose.getX());
       if (xController.atGoal()) {
           xSpeed = 0;
       }
 
-      var ySpeed = yController.calculate(robotPose.getY());
+      double ySpeed = yController.calculate(robotPose.getY());
       if (yController.atGoal()) {
           ySpeed = 0;
       }
 
-      var omegaSpeed = omegaController.calculate(robotPose.getRotation().getRadians());
+      double omegaSpeed = omegaController.calculate(robotPose.getRotation().getRadians());
       if (omegaController.atGoal()) {
           omegaSpeed = 0;
       }
 
-      drivetrainSubsystem.drive(
-              ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, omegaSpeed, robotPose.getRotation()));
+      ChassisSpeeds goalSpeeds = new ChassisSpeeds(xSpeed,ySpeed,omegaSpeed);
+      
+      drivetrainSubsystem.driveRobotRelative(goalSpeeds);
+      
   }
 
   @Override
   public void end(boolean interrupted) {
-    drivetrainSubsystem.stop();
+    drivetrainSubsystem.stopModules();
   }
 
 }

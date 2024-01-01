@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.NothingCommand;
 import frc.robot.commands.SwerveJoystickCmd;
@@ -49,6 +50,9 @@ public class RobotContainer {
       swerveSubsystem,
       m_driverController);
     swerveSubsystem.setDefaultCommand(swerveJoystickCmd); 
+
+    // make the chasetag command
+    Command placeholderChaser = new ChaseTagCommand(m_visionSubsystem, swerveSubsystem);
     
     configureBindings();
 
