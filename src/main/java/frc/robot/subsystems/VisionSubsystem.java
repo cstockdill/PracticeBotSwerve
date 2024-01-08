@@ -9,6 +9,10 @@ import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class VisionSubsystem extends SubsystemBase {
@@ -16,8 +20,16 @@ public class VisionSubsystem extends SubsystemBase {
   private static final double TARGET_HEIGHT_METERS = .279;
   private static final double CAMERA_PITCH_RADIANS = 0.0;
   PhotonCamera m_camera = new PhotonCamera("OV9281");
+  private final DoublePublisher m_rangePub;
+  private final IntegerPublisher m_targetNum;
+
   /** Creates a new VisionSubsystem. */
-  public VisionSubsystem() {}
+  public VisionSubsystem() {
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    NetworkTable table = inst.getTable("Vision/bestTarget");
+    m_rangePub = table.getDoubleTopic("range").publish();
+    m_targetNum = table.getIntegerTopic("targetNum").publish();
+  }
 
   @Override
   public void periodic() {
@@ -28,6 +40,7 @@ public class VisionSubsystem extends SubsystemBase {
     if (result.hasTargets()) {
       var target = result.getBestTarget();
       int targetNumber = target.getFiducialId();
+      m_targetNum.set(targetNumber);
       System.out.println(" Target number:"+targetNumber+" Yaw, pitch:" + target.getYaw()+ "  " + target.getPitch());
     }
     getRange();
@@ -48,6 +61,7 @@ public class VisionSubsystem extends SubsystemBase {
                         CAMERA_PITCH_RADIANS,
                         Units.degreesToRadians(result.getBestTarget().getPitch()));
         System.out.println(" Range to target:"+range);
+        m_rangePub.set(range);
     }
   }
   @Override
