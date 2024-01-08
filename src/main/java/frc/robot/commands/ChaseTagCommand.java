@@ -12,6 +12,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -41,6 +44,12 @@ public class ChaseTagCommand extends CommandBase {
   private Pose2d goalPose;
   private PhotonTrackedTarget lastTarget;
 
+  private  DoublePublisher m_xPub;
+  private  DoublePublisher m_yPub;
+  private  DoublePublisher m_omegaPub;
+  
+  
+
   public ChaseTagCommand(
         VisionSubsystem visionSubsystem, 
         SwerveSubsystem drivetrainSubsystem) {
@@ -63,6 +72,15 @@ public class ChaseTagCommand extends CommandBase {
     omegaController.reset(robotPose.getRotation().getRadians());
     xController.reset(robotPose.getX());
     yController.reset(robotPose.getY());
+    setupPublishers();
+  }
+
+  private void setupPublishers(){
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    NetworkTable table = inst.getTable("Vision/goal");
+    m_xPub = table.getDoubleTopic("X").publish();
+    m_yPub = table.getDoubleTopic("Y").publish();
+    m_omegaPub = table.getDoubleTopic("OmegaRad").publish();
   }
 
   @Override
@@ -93,6 +111,10 @@ public class ChaseTagCommand extends CommandBase {
           xController.setGoal(goalPose.getX());
           yController.setGoal(goalPose.getY());
           omegaController.setGoal(goalPose.getRotation().getRadians());
+          m_xPub.set(goalPose.getX());
+          m_yPub.set(goalPose.getY());
+          m_omegaPub.set(goalPose.getRotation().getRadians());
+
       }
 
       double xSpeed = xController.calculate(robotPose.getX());
